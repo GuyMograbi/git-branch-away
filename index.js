@@ -2,17 +2,21 @@ var shell = require('shelljs');
 
 let allLocalBranches;
 
-console.log(shell.exec('echo hello').toString());
+exports.init = (cwd = process.cwd()) => {
+  allLocalBranches = (shell.exec(`git branch`, {silent: true, cwd}) || '').toString().split('\n').filter(f=>f!='');
+}
 
-exports.init = (cwd) => allLocalBranches = (shell.exec(`git branch`, {silent: true, cwd}) || '').toString().split('\n');
+exports.isClean = () => {
+  return shell.exec(`git status`, {silent: true}).toString().includes('nothing to commit');
+}
 
-exports.isClean = () => shell.exec(`git status`, {silent: true}).toString().includes('nothing to commit');
+exports.current = () => {
+  return allLocalBranches.find(b => b[0] === '*').split('*')[1].trim();
+}
 
-exports.current = () => allLocalBranches.find((b) => b[0] === '*').slice(1).trim();
+exports.other = () => allLocalBranches.filter(l => l[0] !== '*').map((n) => n.trim());
 
-exports.other = () => allLocalBranches.filter((l) => l[0] !== '*').map((n) => n.trim());
-
-exports.all = () => allLocalBranches.map((b) => {
+exports.all = () => allLocalBranches.map(b => {
   if (b[0] === '*') {
     return b.slice(1).trim();
   } else {
