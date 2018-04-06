@@ -6,7 +6,7 @@
     "shelljs": "^0.8.1"
   },
   "scripts": {
-    "test": "ava"
+    "test": "ava tests"
   },
   "devDependencies": {
     "ava": "^0.25.0"
