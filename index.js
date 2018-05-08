@@ -24,7 +24,7 @@ exports.all = () => allLocalBranches.map(b => {
   }
 });
 
-exports.list = (cwd) => {
+exports.list = (cwd = process.cwd()) => {
   exports.init(cwd);
   return {
     current: exports.current(),
