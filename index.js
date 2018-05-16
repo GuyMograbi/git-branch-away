@@ -16,7 +16,7 @@ exports.getUpstream = (branch) => {
 }
 
 // list all branches that were merged to branch X
-exports.getMergedBranches = (targetBranch) {
+exports.getMergedBranches = (targetBranch) => {
   return exports.all(shell.exec(`git branch --merged ${targetBranch}`, {silent: true}).toString().split('\n').filter(f=>f!=''));
 }
 
