@@ -1,10 +1,13 @@
 var shell = require('shelljs');
 
-let allLocalBranches;
+let allBranches;
+let remoteBranches;
 let rootDir;
 
 exports.init = (cwd = process.cwd()) => {
-  allLocalBranches = (shell.exec(`git branch`, {silent: true, cwd}) || '').toString().split('\n').filter(f=>f!='');
+  allBranches = (shell.exec(`git branch`, {silent: true, cwd}) || '').toString().split('\n').filter(f=>f!='');
+  remoteBranches = (shell.exec(`git branch -r`, {silent: true, cwd}) || '').toString().split('\n').filter(f=>f!='').map(f=>f.trim().split(' ')[0]);
+  allBranches = allBranches.concat(remoteBranches.map(b=>b.split('/').slice(1).join('/'))); // remove 'origin/' prefix
   rootDir = shell.exec(`git rev-parse --show-toplevel`, {silent: true, cwd}).toString();
 }
 
@@ -27,12 +30,17 @@ exports.getMergedBranches = (targetBranch) => {
 
 
 exports.current = () => {
-  return allLocalBranches.find(b => b[0] === '*').split('*')[1].trim();
+  return allBranches.find(b => b[0] === '*').split('*')[1].trim();
 }
 
-exports.other = () => allLocalBranches.filter(l => l[0] !== '*').map((n) => n.trim());
+// split to different function because might be
+exports.remote = () => {
+  return remoteBranches;
+}
 
-exports.all = (branches=allLocalBranches) => branches.map(b => {
+exports.other = () => allBranches.filter(l => l[0] !== '*').map((n) => n.trim());
+
+exports.all = (branches=allBranches) => branches.map(b => {
   if (b[0] === '*') {
     return b.slice(1).trim();
   } else {
@@ -46,6 +54,7 @@ exports.list = (cwd = process.cwd()) => {
     current: exports.current(),
     other: exports.other(),
     all: exports.all(),
+    remotes: remoteBranches,
     root: rootDir
   }
 }
