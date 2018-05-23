@@ -5,7 +5,7 @@ let rootDir;
 
 exports.init = (cwd = process.cwd()) => {
   allLocalBranches = (shell.exec(`git branch`, {silent: true, cwd}) || '').toString().split('\n').filter(f=>f!='');
-  rootDir = shell.exec(`git rev-parse --show-toplevel`);
+  rootDir = shell.exec(`git rev-parse --show-toplevel`, {silent: true, cwd}).toString();
 }
 
 exports.root = () => rootDir;
