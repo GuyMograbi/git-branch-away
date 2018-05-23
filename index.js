@@ -4,10 +4,13 @@ let allBranches;
 let remoteBranches;
 let rootDir;
 
+let uniq = a => [...new Set(a)];
+
 exports.init = (cwd = process.cwd()) => {
   allBranches = (shell.exec(`git branch`, {silent: true, cwd}) || '').toString().split('\n').filter(f=>f!='');
   remoteBranches = (shell.exec(`git branch -r`, {silent: true, cwd}) || '').toString().split('\n').filter(f=>f!='').map(f=>f.trim().split(' ')[0]);
   allBranches = allBranches.concat(remoteBranches.map(b=>b.split('/').slice(1).join('/'))); // remove 'origin/' prefix
+  allBranches = uniq(allBranches);
   rootDir = shell.exec(`git rev-parse --show-toplevel`, {silent: true, cwd}).toString();
 }
 
