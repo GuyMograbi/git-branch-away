@@ -18,5 +18,6 @@ gitBranches.current(); // current branch
 gitBranches.isClean();
 gitBranches.other();
 gitBranches.all();
+gitBranches.root(); // gets the root of git repository
 
 ```

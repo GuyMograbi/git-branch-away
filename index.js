@@ -1,24 +1,30 @@
 var shell = require('shelljs');
 
 let allLocalBranches;
+let rootDir;
 
 exports.init = (cwd = process.cwd()) => {
   allLocalBranches = (shell.exec(`git branch`, {silent: true, cwd}) || '').toString().split('\n').filter(f=>f!='');
+  rootDir = shell.exec(`git rev-parse --show-toplevel`);
 }
+
+exports.root = () => rootDir;
 
 exports.isClean = () => {
   return shell.exec(`git status`, {silent: true}).toString().includes('nothing to commit');
 }
 
 // gets which remote is being tracked by this branch. empty string means there's no remote branch being tracked
+// might not support windows. need to figure out how to avoid shelljs printing error messages from git. silent does not help
 exports.getUpstream = (branch) => {
-  return shell.exec(`git rev-parse --abbrev-ref ${branch}@{upstream}`, {silent: true}).toString();
+  return shell.exec(`git rev-parse --abbrev-ref ${branch}@{upstream} 2>/dev/null`, {silent: true}).toString();
 }
 
 // list all branches that were merged to branch X
 exports.getMergedBranches = (targetBranch) => {
   return exports.all(shell.exec(`git branch --merged ${targetBranch}`, {silent: true}).toString().split('\n').filter(f=>f!=''));
 }
+
 
 exports.current = () => {
   return allLocalBranches.find(b => b[0] === '*').split('*')[1].trim();
@@ -39,6 +45,7 @@ exports.list = (cwd = process.cwd()) => {
   return {
     current: exports.current(),
     other: exports.other(),
-    all: exports.all()
+    all: exports.all(),
+    root: rootDir
   }
 }
