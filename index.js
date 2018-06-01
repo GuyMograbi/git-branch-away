@@ -42,6 +42,12 @@ exports.remote = () => {
   return remoteBranches;
 }
 
+exports.getCommitsDiff = (branch = exports.current(), target = `origin/${exports.current()}`) => {
+  const [ahead,behind] = shell.exec(`git rev-list --left-right --count ${branch}...${target}`, {silent: true}).toString().split(/\s|\t/).filter(s=>s.length>0);
+  console.log(ahead,behind);
+  return {ahead, behind};
+}
+
 exports.other = () => allBranches.filter(l => l[0] !== '*').map((n) => n.trim());
 
 exports.all = (branches=allBranches) => branches.map(b => {
