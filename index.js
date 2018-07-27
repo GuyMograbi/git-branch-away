@@ -6,6 +6,12 @@ let rootDir;
 
 let uniq = a => [...new Set(a)];
 
+// true if cwd is in git repository tree
+exports.isRepository = (cwd = process.cwd()) => {
+  // https://stackoverflow.com/a/16925062/1068746
+  return shell.exec(`git rev-parse --is-inside-work-tree`, {silent: true, cwd}).toString().trim() === 'true';
+}
+
 exports.init = (cwd = process.cwd()) => {
   allBranches = (shell.exec(`git branch`, {silent: true, cwd}) || '').toString().split('\n').filter(f=>f!='').map(b=>b.trim());
   remoteBranches = (shell.exec(`git branch -r`, {silent: true, cwd}) || '').toString().split('\n').filter(f=>f!='').map(f=>f.trim().split(' ')[0]);
