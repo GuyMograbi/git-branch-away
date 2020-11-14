@@ -48,6 +48,10 @@ exports.remote = () => {
   return remoteBranches;
 }
 
+exports.getDefaultPrBase = () => {
+   return shell.exec(`git remote show origin | grep 'HEAD branch' | cut -d' ' -f5`, {silent:true}).toString().trim();
+}
+
 exports.getCommitsDiff = (branch = exports.current(), target = `origin/${exports.current()}`) => {
   const [ahead,behind] = shell.exec(`git rev-list --left-right --count ${branch}...${target}`, {silent: true}).toString().split(/\s|\t/).filter(s=>s.length>0);
   console.log(ahead,behind);

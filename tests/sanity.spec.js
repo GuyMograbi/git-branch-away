@@ -6,4 +6,5 @@ test('arrays are equal', t => {
 	t.truthy(gitBranches.current(), 'should have current branch');
 	t.true(gitBranches.other().length > 1, 'should have branches');
 	t.true(gitBranches.root().includes(path.join(__dirname,'..')), 'root should include dirname');
+	t.is(gitBranches.getDefaultPrBase(),'master', 'default branch should be correct');
 });
